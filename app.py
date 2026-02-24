@@ -1,5 +1,6 @@
 import streamlit as st
 from pruner import extract_chapters, context_pruning
+from llm_service import get_tutor_answer
 
 st.set_page_config(page_title="Spark Ed-Tutor", page_icon="📚")
 st.title("Education Tutor for Remote India")
@@ -15,9 +16,11 @@ if uploaded_file:
     query = st.text_input("Ask a question from the curriculum:")
     
     if query:
-        # Step 1: Prune the context locally (Zero API Cost)
-        pruned_context = context_pruning(query, chapters)
+        with st.spinner("Pruning context and thinking..."):
+            pruned_context = context_pruning(query, chapters)
+            context_str = "\n".join(pruned_context)
+            answer = get_tutor_answer(query, context_str)
         
-        # Step 2: Only send the tiny 'pruned' snippet to Gemini
-        st.write("### Pruned Context for LLM:")
-        st.info(pruned_context[0] if pruned_context else "No relevant context found.")
+    st.write("### Tutor's Answer:")
+    st.success(answer)
+    st.info(pruned_context[0] if pruned_context else "No relevant context found.")
