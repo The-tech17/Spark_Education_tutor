@@ -20,7 +20,6 @@ if uploaded_file:
             pruned_context = context_pruning(query, chapters)
             context_str = "\n".join(pruned_context)
             answer = get_tutor_answer(query, context_str)
-            
         st.write("### Tutor's Answer:")
         st.success(answer)
         st.info(pruned_context[0] if pruned_context else "No relevant context found.")
